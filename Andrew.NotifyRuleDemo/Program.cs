@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Andrew.NotifyRuleDemo.Contracts;
+using Andrew.NotifyRuleDemo.NotificationProvider;
+using Andrew.NotifyRuleDemo.Rules;
+using Andrew.NotifyRuleDemo.Rules.Settings;
 
 namespace Andrew.NotifyRuleDemo
 {
@@ -8,57 +12,18 @@ namespace Andrew.NotifyRuleDemo
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-        }
-    }
-
-
-
-    public class NotifyEngine
-    {
-        private List<NotifyRuleBase> _rules;
-
-        private void Execute(CancellationToken token)
-        {
-            while(true)
+            List<INotifyRule> rules = new List<INotifyRule>
             {
-                Thread.Sleep(1000); // sleep 60 sec
-
-                foreach(var r in this._rules)
+                new CheckTaskStatusRule(new CheckTaskStatusRuleSetting { TargetStatue = "Error", Notifications = new List<INotification>
                 {
-                    var x = r.IsMatch(DateTime.Now);
-                    if (x.match == false) continue;
+                    new SlackProvider{ Template = "有 {{Status}} Task 尚未處理，請協助確認 <br> {{Detail}}"}
+                }})
+            };
 
-                    string body = this.ApplyMessageTemplate(r.TemplateName, x.msginfo);
-                    this.SendSlackNotification(r.SlackBotURL, body);
-                }
-            }
-        }
+            var notifyEngine = new NotifyEngine(rules);
 
-        private string ApplyMessageTemplate(string templateName, IDictionary<string, string> templateParameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        private string SendSlackNotification(string slackBotURL, string content)
-        {
-            throw new NotImplementedException();
+            notifyEngine.Execute(default(CancellationToken));
+            
         }
     }
-
-
-
-
-    public abstract class NotifyRuleBase
-    {
-        public abstract (bool match, IDictionary<string, string> msginfo) IsMatch(DateTime time_seed);
-
-        // get channel URL / BOT
-        public string SlackBotURL;
-
-        // get notify content
-        public string TemplateName;
-
-    }
-
 }
