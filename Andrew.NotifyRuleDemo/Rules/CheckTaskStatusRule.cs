@@ -8,24 +8,19 @@ using Andrew.NotifyRuleDemo.Rules.Settings;
 
 namespace Andrew.NotifyRuleDemo.Rules
 {
-    public class CheckTaskStatusRule : INotifyRule
+    public class CheckTaskStatusRule : NotifyRuleBase
     {
         private readonly CheckTaskStatusRuleSetting _setting;
 
         private string _lastCheckHour = string.Empty;
 
-        public List<INotification> Notifications { get; }
-
-        public CheckTaskStatusRule(CheckTaskStatusRuleSetting setting) 
+        public CheckTaskStatusRule(CheckTaskStatusRuleSetting setting) : base(setting.Notifications)
         {
             this._setting = setting;
-            this.Notifications = setting.Notifications;
         }
 
-        public (bool match, IDictionary<string, string> msginfo) IsMatch(DateTime time_seed)
+        public override (bool match, IDictionary<string, string> msginfo) IsMatch(DateTime time_seed)
         {
-            Console.WriteLine($"check task status: {_setting.TargetStatue}");
-            
             //if (_lastCheckHour == DateTime.UtcNow.ToString("HH")) return (false, null);
 
             //紀錄最後確認是的時間, 一小時只要確認一次

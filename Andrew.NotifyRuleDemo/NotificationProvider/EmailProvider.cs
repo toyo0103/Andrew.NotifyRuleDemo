@@ -1,17 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Andrew.NotifyRuleDemo.Contracts;
 
 namespace Andrew.NotifyRuleDemo.NotificationProvider
 {
-    public class SlackProvider : INotificationService
+    public class EmailProvider : INotificationService
     {
         public bool SendNotification(INotification notification, IDictionary<string, string> msgInfo)
         {
-            var slackNotification = (SlackNotification)notification;
-            Console.WriteLine("SendSlack....");
-            Console.WriteLine($"Channel : {slackNotification.Channel}");
+            var emailNotification = (EmailNotification)notification;
+            Console.WriteLine("send email....");
+            Console.WriteLine($"subject : {emailNotification.Subject}");
+            Console.WriteLine($"receiver : {string.Join(",", emailNotification.Receiver)}");
             Console.WriteLine($"content : {ApplyMessageTemplate(notification.Template, msgInfo)}");
 
             return true;
