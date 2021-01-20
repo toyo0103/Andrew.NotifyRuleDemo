@@ -7,11 +7,11 @@ namespace Andrew.NotifyRuleDemo
 {
     public class NotifyEngine
     {
-        private List<NotifyRuleBase> _rules;
+        private List<JobNotifyRuleBase> _rules;
         private readonly INotificationService _notificationService;
 
         public NotifyEngine(
-            List<NotifyRuleBase> rules,
+            List<JobNotifyRuleBase> rules,
             INotificationService notificationService) 
         {
             this._rules = rules;
@@ -26,10 +26,26 @@ namespace Andrew.NotifyRuleDemo
 
                 foreach(var r in this._rules)
                 {
-                    var x = r.IsMatch(DateTime.Now);
-                    if (x.match == false) continue;
-
-                    r.Notifications.ForEach(n => _notificationService.SendNotification(n, x.msginfo));
+                    if (r is JobNotifyRuleBase)
+                    {
+                        var jRule = (JobNotifyRuleBase)r;
+                        foreach (var x in jRule.MatchResult(DateTime.Now))
+                        {
+                            //通知只收名單跟內容
+                            _notificationService.SendNotification(x);
+                        }
+                    }
+                    //else if (r is GroupNotifyRuleBase)
+                    //{
+                    //    foreach (var x in r.MatchResult(DateTime.Now))
+                    //    {
+                    //        r.Notifications.ForEach(n => _notificationService.SendNotification(n, x.msginfo));
+                    //    }
+                    //}
+                    else 
+                    {
+                        Console.WriteLine("RuleBase not implement");   
+                    }
                 }
             }
         }

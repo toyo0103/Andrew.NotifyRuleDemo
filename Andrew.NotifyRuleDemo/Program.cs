@@ -12,22 +12,9 @@ namespace Andrew.NotifyRuleDemo
     {
         static void Main(string[] args)
         {
-            List<NotifyRuleBase> rules = new List<NotifyRuleBase>
+            List<JobNotifyRuleBase> rules = new List<JobNotifyRuleBase>
             {
-                new CheckTaskStatusRule(new CheckTaskStatusRuleSetting { TargetStatue = "Error", Notifications = new List<INotification>
-                {
-                    new SlackNotification
-                    { 
-                        Template = "有 {{Status}} Task 尚未處理，請協助確認 <br> {{Detail}}", 
-                        Channel = "arch-team-devops"
-                    },
-                    new EmailNotification
-                    { 
-                        Subject = "未處理 Error Task", 
-                        Template = "有 {{Status}} Task 尚未處理，請協助確認 <br> {{Detail}}", 
-                        Receiver = new List<string>{ "steventasi@91app.com", "borischin@91app.com" } //只能指定明確的收件人 
-                    }
-                }})
+                new CheckTaskStatusRule(new CheckTaskStatusRuleSetting { TargetStatue = "Error" })
             };
 
             INotificationService ns = new NotificationServiceProxy();
