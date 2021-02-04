@@ -22,7 +22,6 @@ namespace Andrew.NotifyRuleDemo
             var notifyEngine = new NotifyEngine(rules, ns);
 
             notifyEngine.Execute(default(CancellationToken));
-            
         }
     }
 }
